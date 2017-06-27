@@ -1,0 +1,50 @@
+{
+  "name": "uiSchema",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./server/server.js",
+    "copy": "npm run copyBundle && npm run copyCss",
+    "build": "npm run copy && node ./scripts/zip.js",
+    "test": "karma start karma.conf.js"
+  },
+  "author": "chrisChatzi <christos.chatziioannidis@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "*",
+    "history": "^4.6.1",
+    "karma-htmlfile-reporter": "^0.3.5",
+    "react-router": "*",
+    "react-router-dom": "^4.1.1",
+    "redux-simple-router": "^2.0.4",
+    "request": "*"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "*",
+    "babel-preset-react": "*",
+    "babelify": "*",
+    "browserify": "*",
+    "copyfiles": "*",
+    "grunt": "*",
+    "grunt-babel": "*",
+    "grunt-browserify": "*",
+    "grunt-contrib-cssmin": "*",
+    "grunt-eslint": "^19.0.0",
+    "grunt-sass": "*",
+    "jasmine-core": "*",
+    "jasmine-es6": "*",
+    "karma": "*",
+    "karma-babel-preprocessor": "^6.0.1",
+    "karma-browserify": "^5.1.0",
+    "karma-chrome-launcher": "*",
+    "karma-jasmine": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-redux": "*",
+    "redux": "*",
+    "redux-thunk": "*",
+    "watchify": "^3.8.0"
+  },
+  "repository": "https://github.com/chrisChatzi/uiSchema"
+}

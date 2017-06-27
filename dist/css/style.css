@@ -1,0 +1,94 @@
+/*mixins*/
+/*set element with absolute position*/
+/*set an element*/
+/*set colors of element*/
+/*set border of element*/
+/*set element hover*/
+/*set height*/
+/*grid block*/
+/*general*/
+/*fonts*/
+@font-face {
+  font-family: 'christos';
+  font-style: normal;
+  font-weight: normal;
+  src: url("./fonts/ACGeosansLight.otf") format("opentype"); }
+
+/*body*/
+html, body {
+  font-family: "christos", Serif;
+  font-size: 16px;
+  margin: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  text-align: center;
+  background: #f5f5f5;
+  color: #242428;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; }
+
+::-webkit-scrollbar {
+  width: 10px; }
+
+/* Track */
+::-webkit-scrollbar-track {
+  -webkit-border-radius: 10px;
+  background-color: #666;
+  border-radius: 10px; }
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  background: #f0f0f0; }
+
+/*elements*/
+input, select {
+  width: auto;
+  height: 32px;
+  line-height: 32px;
+  margin: 5px 0;
+  padding: 0 5px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  background: #f2f2f5;
+  color: #444;
+  text-align: center; }
+
+textarea {
+  height: 7em;
+  display: inline-block;
+  vertical-align: middle;
+  font-family: 'christos', Serif;
+  resize: none;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  background: #f2f2f5;
+  color: #444; }
+
+select {
+  margin: 0 2px; }
+
+button {
+  font: "christos", Serif;
+  background: #27ae60;
+  color: #fff;
+  padding: 5px 10px;
+  cursor: pointer;
+  height: 30px;
+  white-space: normal;
+  width: auto;
+  box-sizing: border-box;
+  outline: none;
+  border: 0;
+  border-radius: 4px; }
+  button:hover {
+    opacity: 0.75; }
+
+/*# sourceMappingURL=style.css.map */

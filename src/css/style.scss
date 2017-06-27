@@ -1,0 +1,90 @@
+$font: 'christos', Serif;
+
+$borderColor: #ddd;
+$mainBlack : #242428;
+$blackFont : #444;
+$mainRed: #984b43;
+$mainActive : #90afc5;
+$headerMain: #213132;
+
+@import "mixins";
+
+/*general*/
+	/*fonts*/
+		@font-face {
+			font-family: 'christos';
+			font-style: normal;
+			font-weight: normal;
+			src: url('./fonts/ACGeosansLight.otf') format('opentype');
+		}
+
+	/*body*/
+		html, body {
+			font-family: $font;
+			font-size: 16px;
+			margin: 0;
+			overflow-y: auto;
+			overflow-x: hidden;
+			text-align: center;
+			background: #f5f5f5;
+			color: #242428;
+			-ms-touch-action: manipulation;
+			touch-action: manipulation;
+			-webkit-background-size: cover;
+			-moz-background-size: cover;
+			-o-background-size: cover;
+			background-size: cover;
+		}
+		::-webkit-scrollbar {
+		 	width: 10px;
+		}
+		/* Track */
+		::-webkit-scrollbar-track {
+			-webkit-border-radius: 10px;
+			background-color: #666;
+			border-radius: 10px;
+		}
+		/* Handle */
+		::-webkit-scrollbar-thumb {
+		 	-webkit-border-radius: 2px;
+		 	border-radius: 2px;
+			background: #f0f0f0;
+		}
+
+	/*elements*/
+		input, select{
+			@include setDims("", auto, 32px, 5px 0, 0 5px);
+			@include setBorders(4px, 1px solid #ddd);
+			box-sizing: border-box;
+			@include setColors($blackFont, #f2f2f5);
+			text-align: center;
+		}
+		textarea{
+			height: 7em;
+			display:inline-block;
+			vertical-align:middle;
+			font-family: 'christos', Serif;
+			resize: none;
+			@include setBorders(4px, 1px solid #ddd);
+			box-sizing: border-box;
+			@include setColors($blackFont, #f2f2f5);
+		}
+		select{
+			margin: 0 2px;
+		}
+		button{
+			font: $font;
+			@include setColors(#fff, #27ae60);
+			padding: 5px 10px;
+			cursor: pointer;
+			height: 30px;
+			white-space: normal;
+			width: auto;
+			box-sizing: border-box;
+			outline: none;
+			border: 0;
+			border-radius: 4px;
+			&:hover{ opacity: 0.75; }
+		}
+
+// generic classes
