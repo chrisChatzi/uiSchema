@@ -1,8 +1,12 @@
 import React, { PropTypes } from 'react'
+import Popup from './Popup.js'
 
-const Main = ( { categories, openTag } ) => (
+const Main = ( { state, categories, product, openTag, newTag, openPopup, closePopup, changeInput, addProduct } ) => (
 	<div className="main">
-        <div className="add"><i className="fa fa-plus"></i></div>
+		<div className={(state.popup) ? "popupBack" : "popupBack off"} onClick={closePopup}></div>
+        <div className={(state.popup) ? "popup" : "popup off"} id="popupCat">
+            <Popup data={product} changeInput={changeInput} action={addProduct} newFlag={true} />
+        </div>
         {(categories.length > 0) ?
             categories.map( (v,i) =>
                 <div key={i}>
@@ -29,6 +33,7 @@ const Main = ( { categories, openTag } ) => (
                                     <div key={iOffer} className="tag" onClick={()=>openTag(i, iOffer)}>{vOffer.id}</div>
                                 )
                             :"No offers"}
+							<div className="tag plus" onClick={()=>newTag(v.id)}><i className="fa fa-plus"></i></div>
                         </div>
                     </div>
                 </div>

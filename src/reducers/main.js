@@ -17,10 +17,13 @@ const state_update = (state = init.main, action) => {
 			return newstate;
 		}
 		case "UPDATE_PRODUCT": {
-			// let arr = newstate.product.slice();
 			let arr = [action.data];
-			console.log(arr)
 			newstate.product = arr;
+			return newstate;
+		}
+		case "NEW_PRODUCT": {
+			let arr = [action.data];
+			newstate.categories = arr;
 			return newstate;
 		}
 		default:

@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react'
 import Popup from './Popup.js'
 
-const Product = ( { state, product, delProduct, openPopup, closePopup, changeInput, updateProduct } ) => (
+const Product = ( { state, product, delProduct, openPopup, closePopup, changeInput, updateProduct, visibility } ) => (
 	<div className="product">
         <div className={(state.popup) ? "popupBack" : "popupBack off"} onClick={closePopup}></div>
         <div className={(state.popup) ? "popup" : "popup off"} id="popup">
-            <Popup data={product} changeInput={changeInput} updateProduct={updateProduct} />
+            <Popup data={product} changeInput={changeInput} action={updateProduct} />
         </div>
         {(product.length > 0) ?
             product.map( (v,i) =>
@@ -29,53 +29,60 @@ const Product = ( { state, product, delProduct, openPopup, closePopup, changeInp
                     </div>
                     {v.offer.map( (vOffer, iOffer) =>
                         <div key={iOffer} className="offer">
-                            <div className="productRow head">Offer</div>
-                            <div className="productRow">
-                                <div className="key">Created at</div>
-                                <div className="val">{vOffer.createdAt}</div>
-                            </div>
-                            <div className="productRow">
-                                <div className="key">Name</div>
-                                <div className="val">{vOffer.properties.name}</div>
-                            </div>
-                            <div className="productRow">
-                                <div className="key">Category</div>
-                                <div className="val">{vOffer.properties.category}</div>
-                            </div>
-                            <div className="productRow">
-                                <div className="key">Description</div>
-                                <div className="val">{vOffer.properties.description}</div>
-                            </div>
-                            <div className="productRow">
-                                <div className="key">Product name</div>
-                                <div className="val">{vOffer.properties.productName}</div>
-                            </div>
-                            <div className="productRow">
-                                <div className="key">Retailer URL</div>
-                                <div className="val">{vOffer.properties.retailerUrl}</div>
-                            </div>
-                            <div className="productRow">
-                                <div className="key">Product Brand</div>
-                                <div className="val">{vOffer.properties.productBrand}</div>
-                            </div>
-                            <div className="productRow">
-                                <div className="key">Original price</div>
-                                <div className="val">
-                                    {vOffer.properties.originalPrice.amount+" "+vOffer.properties.originalPrice.currencyCode}
-                                </div>
-                            </div>
-                            <div className="productRow">
-                                <div className="key">Reduced price</div>
-                                <div className="val">
-                                    {vOffer.properties.reducedPrice.amount+" "+vOffer.properties.reducedPrice.currencyCode}
-                                </div>
-                            </div>
-                            <div className="productRow">
-                                <div className="key">Image</div>
-                                <div className="val">{vOffer.properties.productImagePointer.itemName}</div>
-                            </div>
-                        </div>
-                    )}
+                            <div className="productRow head expand" onClick={()=>visibility(iOffer)}>
+								Offer
+								<div className="header headerPlus">
+									<i id={"chev-"+iOffer} className="fa fa-chevron-down"></i>
+								</div>
+							</div>
+							<div id={"div-"+iOffer}>
+								<div className="productRow">
+									<div className="key">Created at</div>
+									<div className="val">{vOffer.createdAt}</div>
+								</div>
+								<div className="productRow">
+									<div className="key">Name</div>
+									<div className="val">{vOffer.properties.name}</div>
+								</div>
+								<div className="productRow">
+									<div className="key">Category</div>
+									<div className="val">{vOffer.properties.category}</div>
+								</div>
+								<div className="productRow">
+									<div className="key">Description</div>
+									<div className="val">{vOffer.properties.description}</div>
+								</div>
+								<div className="productRow">
+									<div className="key">Product name</div>
+									<div className="val">{vOffer.properties.productName}</div>
+								</div>
+								<div className="productRow">
+									<div className="key">Retailer URL</div>
+									<div className="val">{vOffer.properties.retailerUrl}</div>
+								</div>
+								<div className="productRow">
+									<div className="key">Product Brand</div>
+									<div className="val">{vOffer.properties.productBrand}</div>
+								</div>
+								<div className="productRow">
+									<div className="key">Original price</div>
+									<div className="val">
+										{vOffer.properties.originalPrice.amount+" "+vOffer.properties.originalPrice.currencyCode}
+									</div>
+								</div>
+								<div className="productRow">
+									<div className="key">Reduced price</div>
+									<div className="val">
+										{vOffer.properties.reducedPrice.amount+" "+vOffer.properties.reducedPrice.currencyCode}
+									</div>
+								</div>
+								<div className="productRow">
+									<div className="key">Image</div>
+									<div className="val">{vOffer.properties.productImagePointer.itemName}</div>
+								</div>
+							</div>
+						</div>
+					)}
                 </div>
             )
         :""}

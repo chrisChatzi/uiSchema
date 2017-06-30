@@ -47,10 +47,25 @@ class Product extends Component {
         this.closePopup = this.closePopupHandler.bind(this);
         this.changeInput = this.changeInputHandler.bind(this);
         this.updateProduct = this.updateProductHandler.bind(this);
+        this.visibility = this.visibilityHandler.bind(this);
 	}
 
 	componentDidMount() { }
 
+	// expand/collapse offer
+	visibilityHandler(i){
+		let el = document.getElementById("div-"+i);
+		let elTick = document.getElementById("chev-"+i);
+		if(el.style.display == "none"){
+			el.style.display = "block";
+			elTick.classList.remove("fa-chevron-up");
+			elTick.classList += " fa-chevron-down";
+		}else{
+			el.style.display = "none";
+			elTick.classList.remove("fa-chevron-down");
+			elTick.classList += " fa-chevron-up";
+		}
+	}
     // delete product
     delProductHandler(){
         let r = confirm("Are you sure you want to delete this product?\nId: "+this.props.product[0].id);
@@ -106,7 +121,7 @@ class Product extends Component {
 			<div>
 				<ProductC state={this.state}
                     product={this.props.product} delProduct={this.delProduct}
-                    openPopup={this.openPopup} closePopup={this.closePopup}
+                    openPopup={this.openPopup} closePopup={this.closePopup} visibility={this.visibility}
                     changeInput={this.changeInput} updateProduct={this.updateProduct} />
 			</div>
 		)

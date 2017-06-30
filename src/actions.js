@@ -69,7 +69,6 @@ export const update_product  = (obj, catId, prodId) => {
             data : {data : obj, prodId : prodId, catId : catId}
         };
         ajax.ajaxRequest(options, (res) => {
-            console.log(res.data)
             if(res.type == "ok") dispatch(update_product_reducer(res.data))
         });
     };
@@ -77,6 +76,27 @@ export const update_product  = (obj, catId, prodId) => {
 export const update_product_reducer  = (data) => {
     return {
         type: "UPDATE_PRODUCT",
+        data
+    };
+};
+// new product
+export const new_product  = (data, prodId, catId) => {
+    return (dispatch) => {
+        let options = {
+            url : "/productNew",
+            type : "POST",
+            contentType : "application/json; charset=utf-8",
+            data : {data : data, prodId : prodId, catId : catId}
+        };
+        ajax.ajaxRequest(options, (res) => {
+            if(res.type == "ok" && res.data) dispatch(new_product_reducer(res.data))
+            else alert("id of product already exists")
+        });
+    };
+};
+export const new_product_reducer  = (data) => {
+    return {
+        type: "NEW_PRODUCT",
         data
     };
 };

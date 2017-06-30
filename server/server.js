@@ -137,15 +137,15 @@ var express = require('express'),
         });
         // delete product
         app.post('/productDel', function (req, res){
-            productModel.find({ id : req.body.id }, function(err, result) {
+            productModel.findOneAndRemove({ id : req.body.id }, function(err, product) {
                 if (err) throw err;
-                productModel.remove(function(err) {
-                    if (err) throw err;
+                // product.remove(function(err) {
+                //     if (err) throw err;
                     categoryModel.findOneAndUpdate({id: req.body.catId}, {$pull: {offers: {id : req.body.id}}}, function(err, data){
                         if(err) throw err
                         res.send(JSON.stringify({ data : true }))
                     });
-                });
+                // });
             });
         });
         // update product
@@ -154,6 +154,23 @@ var express = require('express'),
                 if(err) throw err
                 res.send(JSON.stringify({ data : data }))
             });
+        });
+        // new product
+        app.post('/productNew', function (req, res){
+            productModel.find({id : req.body.prodId}, function(err, ex) {
+                if (err) throw err;
+                if(ex.length <= 0){
+                    let newProduct = new productModel(req.body.data)
+                    newProduct.save(function(err, dataProd){
+                        if(err) throw err
+                        categoryModel.findOneAndUpdate({id: req.body.catId}, { $push : {offers: {id:req.body.prodId} } }, {new: true}, function(err, data){
+                            if(err) throw err
+                            res.send(JSON.stringify({ data : data }))
+                        });
+                    });
+                }else res.send(JSON.stringify({ data : false }))
+            });
+
         });
         //////////////////////////
         // listening
