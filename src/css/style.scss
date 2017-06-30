@@ -61,3 +61,71 @@ $font: 'christos', Serif;
 		}
 
 // generic classes
+	.add{
+		position: fixed;
+		bottom: 20px;
+		right: 20px;
+		width: 50px;
+		height: 50px;
+		line-height: 50px;
+		border: 0;
+		border-radius: 50px;
+		background: green;
+		color: #fff;
+		cursor: pointer;
+		&:hover{
+			opacity: 0.8;
+		}
+	}
+	.head{
+		height: 50px;
+		line-height: 50px;
+		border-bottom: 1px solid #ddd;
+		font-weight: bold;
+	}
+	.box{
+		border: 1px solid #ddd;
+		border-radius: 5px;
+		box-sizing: border-box;
+		box-shadow: 2px 1px 1px 1px rgba(0,0,0,0.25);
+		background: #fff;
+	}
+	.row{
+		height: 50px;
+		line-height: 50px;
+		.key{
+			float: left;
+			width: 30%;
+		}
+		.val{
+			float: left;
+			width: 70%
+		}
+
+	}
+	.row:nth-child(even){ background: #f5f5f5; }
+// main
+.main{
+	float: left;
+	width: 31%;
+	margin: 5px 1%;
+	overflow: auto;
+	@extend .box;
+	.mainRow{
+		@extend .row;
+	}
+	.tag{
+		float: left;
+		background: #f0f0f0;
+		border: 1px solid #000;
+		height: 30px;
+		line-height: 30px;
+		padding: 0 10px;
+		min-width: 50px;
+		margin: 10px 5px 0 5px;
+		cursor: pointer;
+		&:hover{
+			background: #fff;
+		}
+	}
+}

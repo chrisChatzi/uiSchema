@@ -7,6 +7,10 @@ const state_update = (state = init.main, action) => {
 			newstate.categories = action.data;
 			return newstate;
 		}
+		case "LOAD_PRODUCT": {
+		console.log(action.data);
+			return newstate;
+		}
 		default:
 			return state || init.main
 	}

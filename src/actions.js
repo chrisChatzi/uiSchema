@@ -19,3 +19,24 @@ export const load_categories_reducer  = (data) => {
         data
     };
 };
+
+//load product
+export const load_product  = (id) => {
+    return (dispatch) => {
+        let options = {
+            url : "/product",
+            type : "POST",
+            contentType : "application/json; charset=utf-8",
+            data : {id : id}
+        };
+        ajax.ajaxRequest(options, (res) => {
+            if(res.type == "ok") dispatch(load_product_reducer(res.data))
+        });
+    };
+};
+export const load_product_reducer  = (data) => {
+    return {
+        type: "LOAD_PRODUCT",
+        data
+    };
+};

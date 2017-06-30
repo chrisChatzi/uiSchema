@@ -5,7 +5,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import MainC from '../components/Main.js'
-import { load_categories } from '../actions.js'
+import { load_categories, load_product } from '../actions.js'
 import history from '../history.js'
 
 function mapStateToProps(state) {
@@ -17,8 +17,11 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 	return {
 		loadCategories: () => {
-			dispatch(load_categories())
+			dispatch(load_categories());
 		},
+        loadProduct: (productIdx) => {
+            dispatch(load_product(productIdx));
+        }
 	};
 }
 
@@ -31,16 +34,23 @@ class Main extends Component {
 
 	constructor(props) {
 		super(props);
+
+        this.openTag = this.openTagHandler.bind(this);
 	}
 
 	componentDidMount() {
         this.props.loadCategories();
 	}
 
+    //open product
+    openTagHandler(catIdx, idx){
+        this.props.loadProduct(this.props.categories[catIdx].offers[idx].id)
+    }
+
 	render() {
 		return (
 			<div>
-				<MainC categories={this.props.categories}/>
+				<MainC categories={this.props.categories} openTag={this.openTag} />
 			</div>
 		)
 	}

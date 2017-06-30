@@ -36139,7 +36139,7 @@ module.exports = warning;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.load_categories_reducer = exports.load_categories = undefined;
+exports.load_product_reducer = exports.load_product = exports.load_categories_reducer = exports.load_categories = undefined;
 
 var _ajaxQuery = require("ajax-query");
 
@@ -36167,6 +36167,27 @@ var load_categories_reducer = exports.load_categories_reducer = function load_ca
     };
 };
 
+//load product
+var load_product = exports.load_product = function load_product(id) {
+    return function (dispatch) {
+        var options = {
+            url: "/product",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            data: { id: id }
+        };
+        _ajaxQuery2.default.ajaxRequest(options, function (res) {
+            if (res.type == "ok") dispatch(load_product_reducer(res.data));
+        });
+    };
+};
+var load_product_reducer = exports.load_product_reducer = function load_product_reducer(data) {
+    return {
+        type: "LOAD_PRODUCT",
+        data: data
+    };
+};
+
 },{"ajax-query":1}],258:[function(require,module,exports){
 "use strict";
 
@@ -36181,27 +36202,116 @@ var _react2 = _interopRequireDefault(_react);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Main = function Main(_ref) {
-    var categories = _ref.categories;
+    var categories = _ref.categories,
+        openTag = _ref.openTag;
     return _react2.default.createElement(
         "div",
         { className: "main" },
+        _react2.default.createElement(
+            "div",
+            { className: "add" },
+            _react2.default.createElement("i", { className: "fa fa-plus" })
+        ),
         categories.length > 0 ? categories.map(function (v, i) {
             return _react2.default.createElement(
                 "div",
                 { key: i },
                 _react2.default.createElement(
                     "div",
-                    null,
+                    { className: "mainRow head" },
                     v.id
+                ),
+                _react2.default.createElement(
+                    "div",
+                    { className: "mainRow" },
+                    _react2.default.createElement(
+                        "div",
+                        { className: "key" },
+                        "Properties"
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "val" },
+                        v.properties
+                    )
+                ),
+                _react2.default.createElement(
+                    "div",
+                    { className: "mainRow" },
+                    _react2.default.createElement(
+                        "div",
+                        { className: "key" },
+                        "Content type"
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "val" },
+                        v.contentType
+                    )
+                ),
+                _react2.default.createElement(
+                    "div",
+                    { className: "mainRow" },
+                    _react2.default.createElement(
+                        "div",
+                        { className: "key" },
+                        "Created At"
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "val" },
+                        v.createdAt
+                    )
+                ),
+                _react2.default.createElement(
+                    "div",
+                    { className: "mainRow" },
+                    _react2.default.createElement(
+                        "div",
+                        { className: "key" },
+                        "Products"
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "val" },
+                        v.offers.map(function (vOffer, iOffer) {
+                            return _react2.default.createElement(
+                                "div",
+                                { key: iOffer, className: "tag", onClick: function onClick() {
+                                        return openTag(i, iOffer);
+                                    } },
+                                vOffer.properties.name
+                            );
+                        })
+                    )
                 )
             );
-        }) : "Add"
+        }) : "No data"
     );
 };
 
 exports.default = Main;
 
 },{"react":232}],259:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Product = function Product() {
+	return _react2.default.createElement("div", { className: "product" });
+};
+
+exports.default = Product;
+
+},{"react":232}],260:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36246,6 +36356,9 @@ function mapDispatchToProps(dispatch) {
 	return {
 		loadCategories: function loadCategories() {
 			dispatch((0, _actions.load_categories)());
+		},
+		loadProduct: function loadProduct(productIdx) {
+			dispatch((0, _actions.load_product)(productIdx));
 		}
 	};
 }
@@ -36263,7 +36376,10 @@ var Main = function (_Component) {
 	function Main(props) {
 		_classCallCheck(this, Main);
 
-		return _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
+		var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
+
+		_this.openTag = _this.openTagHandler.bind(_this);
+		return _this;
 	}
 
 	_createClass(Main, [{
@@ -36271,13 +36387,21 @@ var Main = function (_Component) {
 		value: function componentDidMount() {
 			this.props.loadCategories();
 		}
+
+		//open product
+
+	}, {
+		key: 'openTagHandler',
+		value: function openTagHandler(catIdx, idx) {
+			this.props.loadProduct(this.props.categories[catIdx].offers[idx].id);
+		}
 	}, {
 		key: 'render',
 		value: function render() {
 			return _react2.default.createElement(
 				'div',
 				null,
-				_react2.default.createElement(_Main2.default, { categories: this.props.categories })
+				_react2.default.createElement(_Main2.default, { categories: this.props.categories, openTag: this.openTag })
 			);
 		}
 	}]);
@@ -36287,7 +36411,89 @@ var Main = function (_Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Main);
 
-},{"../actions.js":257,"../components/Main.js":258,"../history.js":260,"react":232,"react-redux":180}],260:[function(require,module,exports){
+},{"../actions.js":257,"../components/Main.js":258,"../history.js":262,"react":232,"react-redux":180}],261:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRedux = require('react-redux');
+
+var _Product = require('../components/Product.js');
+
+var _Product2 = _interopRequireDefault(_Product);
+
+var _actions = require('../actions.js');
+
+var _history = require('../history.js');
+
+var _history2 = _interopRequireDefault(_history);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               	Header component
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               */
+
+function mapStateToProps(state) {
+	return {};
+}
+
+function mapDispatchToProps(dispatch) {
+	return {
+		loadCategories: function loadCategories() {
+			dispatch((0, _actions.load_categories)());
+		}
+	};
+}
+
+var Product = function (_Component) {
+	_inherits(Product, _Component);
+
+	_createClass(Product, null, [{
+		key: 'propTypes',
+		get: function get() {
+			return {};
+		}
+	}]);
+
+	function Product(props) {
+		_classCallCheck(this, Product);
+
+		return _possibleConstructorReturn(this, (Product.__proto__ || Object.getPrototypeOf(Product)).call(this, props));
+	}
+
+	_createClass(Product, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {}
+	}, {
+		key: 'render',
+		value: function render() {
+			return _react2.default.createElement(
+				'div',
+				null,
+				_react2.default.createElement(_Product2.default, null)
+			);
+		}
+	}]);
+
+	return Product;
+}(_react.Component);
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Product);
+
+},{"../actions.js":257,"../components/Product.js":259,"../history.js":262,"react":232,"react-redux":180}],262:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36302,7 +36508,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = (0, _createBrowserHistory2.default)();
 
-},{"history/createBrowserHistory":29}],261:[function(require,module,exports){
+},{"history/createBrowserHistory":29}],263:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -36327,6 +36533,10 @@ var _Main = require('./routes/Main');
 
 var _Main2 = _interopRequireDefault(_Main);
 
+var _Product = require('./routes/Product');
+
+var _Product2 = _interopRequireDefault(_Product);
+
 var _redux = require('redux');
 
 var _reducers = require('./reducers');
@@ -36348,13 +36558,14 @@ function desktop() {
 			_react2.default.createElement(
 				'div',
 				null,
-				_react2.default.createElement(_reactRouter.Route, { exact: true, path: '/', component: _Main2.default })
+				_react2.default.createElement(_reactRouter.Route, { exact: true, path: '/', component: _Main2.default }),
+				_react2.default.createElement(_reactRouter.Route, { exact: true, path: '/product', component: _Product2.default })
 			)
 		)
 	), document.getElementById('app'));
 }
 
-},{"./history.js":260,"./reducers":263,"./routes/Main":265,"react":232,"react-dom":44,"react-redux":180,"react-router":203,"redux":239,"redux-thunk":233}],262:[function(require,module,exports){
+},{"./history.js":262,"./reducers":265,"./routes/Main":267,"./routes/Product":268,"react":232,"react-dom":44,"react-redux":180,"react-router":203,"redux":239,"redux-thunk":233}],264:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -36366,7 +36577,7 @@ var main = {
 
 exports.default = { main: main };
 
-},{}],263:[function(require,module,exports){
+},{}],265:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36387,7 +36598,7 @@ var reducer = (0, _redux.combineReducers)({
 
 exports.default = reducer;
 
-},{"./main":264,"redux":239}],264:[function(require,module,exports){
+},{"./main":266,"redux":239}],266:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -36411,6 +36622,11 @@ var state_update = function state_update() {
 				newstate.categories = action.data;
 				return newstate;
 			}
+		case "LOAD_PRODUCT":
+			{
+				console.log(action.data);
+				return newstate;
+			}
 		default:
 			return state || _initialState2.default.main;
 	}
@@ -36418,7 +36634,7 @@ var state_update = function state_update() {
 
 exports.default = state_update;
 
-},{"../initialState":262}],265:[function(require,module,exports){
+},{"../initialState":264}],267:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36445,4 +36661,31 @@ var Main = function Main() {
 
 exports.default = Main;
 
-},{"../containers/Main":259,"react":232}]},{},[261]);
+},{"../containers/Main":260,"react":232}],268:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Product = require('../containers/Product');
+
+var _Product2 = _interopRequireDefault(_Product);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Product = function Product() {
+	return _react2.default.createElement(
+		'div',
+		null,
+		_react2.default.createElement(_Product2.default, null)
+	);
+};
+
+exports.default = Product;
+
+},{"../containers/Product":261,"react":232}]},{},[263]);

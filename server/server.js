@@ -81,6 +81,41 @@ var express = require('express'),
                 });
                 categoryModel = mongoose.model('categoryModel', categorySchema);
                 productModel = mongoose.model('productModel', productSchema);
+
+                let y = new productModel({
+                    "contentType":"String",
+                    "id":"1",
+                    "properties":"String",
+                    "createdAt":"String",
+                    "offer":[
+                       {
+                          "properties":{
+                             "name":"String",
+                             "category":"String",
+                             "description":"String",
+                             "productName":"String",
+                             "retailerUrl":"String",
+                             "productBrand":"String",
+                             "reducedPrice":{
+                                "amount":5,
+                                "currencyCode":"String"
+                             },
+                             "originalPrice":{
+                                "amount":4,
+                                "currencyCode":"String"
+                             },
+                             "productImagePointer":{
+                                "itemName":"String"
+                             }
+                          },
+                          "createdAt":new Date()
+                       }
+                    ]
+                });
+                y.save(function(err) {
+                  if (err) throw err;
+                  console.log('prod saved successfully!');
+                });
                 httpServerFunction();
             });
             mongoose.connect(mongoPath);
@@ -92,6 +127,16 @@ var express = require('express'),
 
         app.get('/categories', function (req, res){
             categoryModel.find({}, function(err, result) {
+                if (err) throw err;
+                res.send(JSON.stringify({ data : result}))
+            });
+        });
+
+        app.use(bodyParser.json({limit: "50mb"}));
+        app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}))
+
+        app.post('/product', function (req, res){
+            productModel.find({ id : req.body.id }, function(err, result) {
                 if (err) throw err;
                 res.send(JSON.stringify({ data : result}))
             });
