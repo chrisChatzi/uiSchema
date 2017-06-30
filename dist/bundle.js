@@ -36139,102 +36139,39 @@ module.exports = warning;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.load_results = exports.delete_team = exports.upsert_team = exports.edit_team = exports.load_teams = exports.delete_league = exports.upsert_league = exports.edit_league = exports.load_leagues = exports.admin_login = exports.all_set = exports.login = exports.setup = undefined;
+exports.load_categories_reducer = exports.load_categories = undefined;
 
-require("./general/logic.js");
+var _ajaxQuery = require("ajax-query");
 
-//first time logged in, setup details page
-var setup = exports.setup = function setup(id) {
-    return {
-        type: "SETUP",
-        id: id
+var _ajaxQuery2 = _interopRequireDefault(_ajaxQuery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//load parent components
+var load_categories = exports.load_categories = function load_categories() {
+    return function (dispatch) {
+        var options = {
+            url: "/categories",
+            type: "GET",
+            contentType: "application/json; charset=utf-8"
+        };
+        _ajaxQuery2.default.ajaxRequest(options, function (res) {
+            if (res.type == "ok") dispatch(load_categories_reducer(res.data));
+        });
     };
 };
-
-var login = exports.login = function login(data) {
+var load_categories_reducer = exports.load_categories_reducer = function load_categories_reducer(data) {
     return {
-        type: "LOGIN",
+        type: "LOAD_CATEGORIES",
         data: data
     };
 };
 
-var all_set = exports.all_set = function all_set(data) {
-    return {
-        type: "ALL_SET",
-        data: data
-    };
-};
-
-// ADMIN
-// login
-var admin_login = exports.admin_login = function admin_login() {
-    return {
-        type: "ADMIN_LOGIN"
-    };
-};
-// league
-var load_leagues = exports.load_leagues = function load_leagues(data) {
-    return {
-        type: "LOAD_LEAGUES",
-        data: data
-    };
-};
-var edit_league = exports.edit_league = function edit_league(item) {
-    return {
-        type: "EDIT_LEAGUE",
-        item: item
-    };
-};
-var upsert_league = exports.upsert_league = function upsert_league(item, typeL, id) {
-    return {
-        type: "UPSERT_LEAGUE",
-        item: item, typeL: typeL, id: id
-    };
-};
-var delete_league = exports.delete_league = function delete_league(idx) {
-    return {
-        type: "DELETE_LEAGUE",
-        idx: idx
-    };
-};
-// team
-var load_teams = exports.load_teams = function load_teams(data) {
-    return {
-        type: "LOAD_TEAMS",
-        data: data
-    };
-};
-var edit_team = exports.edit_team = function edit_team(item) {
-    return {
-        type: "EDIT_TEAM",
-        item: item
-    };
-};
-var upsert_team = exports.upsert_team = function upsert_team(item, typeL, id) {
-    return {
-        type: "UPSERT_TEAM",
-        item: item, typeL: typeL, id: id
-    };
-};
-var delete_team = exports.delete_team = function delete_team(idx) {
-    return {
-        type: "DELETE_TEAM",
-        idx: idx
-    };
-};
-// results
-var load_results = exports.load_results = function load_results(data) {
-    return {
-        type: "LOAD_RESULTS",
-        data: data
-    };
-};
-
-},{"./general/logic.js":260}],258:[function(require,module,exports){
+},{"ajax-query":1}],258:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+    value: true
 });
 
 var _react = require("react");
@@ -36244,12 +36181,22 @@ var _react2 = _interopRequireDefault(_react);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Main = function Main(_ref) {
-	var data = _ref.data;
-	return _react2.default.createElement(
-		"div",
-		{ className: "main" },
-		"main"
-	);
+    var categories = _ref.categories;
+    return _react2.default.createElement(
+        "div",
+        { className: "main" },
+        categories.length > 0 ? categories.map(function (v, i) {
+            return _react2.default.createElement(
+                "div",
+                { key: i },
+                _react2.default.createElement(
+                    "div",
+                    null,
+                    v.id
+                )
+            );
+        }) : "Add"
+    );
 };
 
 exports.default = Main;
@@ -36273,7 +36220,7 @@ var _Main = require('../components/Main.js');
 
 var _Main2 = _interopRequireDefault(_Main);
 
-require('../actions.js');
+var _actions = require('../actions.js');
 
 var _history = require('../history.js');
 
@@ -36286,31 +36233,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               	Main component
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               	Header component
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
 function mapStateToProps(state) {
 	return {
-		data: state.main.data
+		categories: state.main.categories
 	};
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		change_path: function (_change_path) {
-			function change_path(_x, _x2, _x3) {
-				return _change_path.apply(this, arguments);
-			}
-
-			change_path.toString = function () {
-				return _change_path.toString();
-			};
-
-			return change_path;
-		}(function (category, product, categories) {
-			if (product) dispatch(get_products_frontend(category, product));
-			dispatch(change_path(category, product, categories));
-		})
+		loadCategories: function loadCategories() {
+			dispatch((0, _actions.load_categories)());
+		}
 	};
 }
 
@@ -36332,19 +36268,16 @@ var Main = function (_Component) {
 
 	_createClass(Main, [{
 		key: 'componentDidMount',
-		value: function componentDidMount(e) {
-			document.title = "";
+		value: function componentDidMount() {
+			this.props.loadCategories();
 		}
-	}, {
-		key: 'componentWillUnmount',
-		value: function componentWillUnmount() {}
 	}, {
 		key: 'render',
 		value: function render() {
 			return _react2.default.createElement(
 				'div',
 				null,
-				_react2.default.createElement(_Main2.default, { data: this.props.data })
+				_react2.default.createElement(_Main2.default, { categories: this.props.categories })
 			);
 		}
 	}]);
@@ -36354,10 +36287,7 @@ var Main = function (_Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Main);
 
-},{"../actions.js":257,"../components/Main.js":258,"../history.js":261,"react":232,"react-redux":180}],260:[function(require,module,exports){
-"use strict";
-
-},{}],261:[function(require,module,exports){
+},{"../actions.js":257,"../components/Main.js":258,"../history.js":260,"react":232,"react-redux":180}],260:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36372,7 +36302,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = (0, _createBrowserHistory2.default)();
 
-},{"history/createBrowserHistory":29}],262:[function(require,module,exports){
+},{"history/createBrowserHistory":29}],261:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -36403,22 +36333,9 @@ var _reducers = require('./reducers');
 
 var _reducers2 = _interopRequireDefault(_reducers);
 
-var _ajaxQuery = require('ajax-query');
-
-var _ajaxQuery2 = _interopRequireDefault(_ajaxQuery);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var store = (0, _redux.createStore)(_reducers2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default));
-
-var options = {
-	url: "/file",
-	type: "GET",
-	contentType: "application/json; charset=utf-8"
-};
-_ajaxQuery2.default.ajaxRequest(options, function (res) {
-	if (res.type == "ok") console.log(res);
-});
 
 desktop();
 function desktop() {
@@ -36437,19 +36354,19 @@ function desktop() {
 	), document.getElementById('app'));
 }
 
-},{"./history.js":261,"./reducers":264,"./routes/Main":266,"ajax-query":1,"react":232,"react-dom":44,"react-redux":180,"react-router":203,"redux":239,"redux-thunk":233}],263:[function(require,module,exports){
+},{"./history.js":260,"./reducers":263,"./routes/Main":265,"react":232,"react-dom":44,"react-redux":180,"react-router":203,"redux":239,"redux-thunk":233}],262:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 var main = {
-	path: "main"
+	categories: []
 };
 
 exports.default = { main: main };
 
-},{}],264:[function(require,module,exports){
+},{}],263:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36470,7 +36387,7 @@ var reducer = (0, _redux.combineReducers)({
 
 exports.default = reducer;
 
-},{"./main":265,"redux":239}],265:[function(require,module,exports){
+},{"./main":264,"redux":239}],264:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -36489,9 +36406,9 @@ var state_update = function state_update() {
 
 	var newstate = Object.assign({}, state);
 	switch (action.type) {
-		case "ALL_SET":
+		case "LOAD_CATEGORIES":
 			{
-				newstate.data = action.data;
+				newstate.categories = action.data;
 				return newstate;
 			}
 		default:
@@ -36501,7 +36418,7 @@ var state_update = function state_update() {
 
 exports.default = state_update;
 
-},{"../initialState":263}],266:[function(require,module,exports){
+},{"../initialState":262}],265:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36528,4 +36445,4 @@ var Main = function Main() {
 
 exports.default = Main;
 
-},{"../containers/Main":259,"react":232}]},{},[262]);
+},{"../containers/Main":259,"react":232}]},{},[261]);

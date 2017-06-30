@@ -15,17 +15,6 @@ let store = createStore(
 	applyMiddleware(thunkMiddleware)
 )
 
-import ajax from 'ajax-query'
-
-let options = {
-	url : "/file",
-	type : "GET",
-	contentType : "application/json; charset=utf-8"
-};
-ajax.ajaxRequest(options, (res) => {
-	if(res.type == "ok") console.log(res)
-});
-
 desktop()
 function desktop(){
 	render(

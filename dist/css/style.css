@@ -1,11 +1,3 @@
-/*mixins*/
-/*set element with absolute position*/
-/*set an element*/
-/*set colors of element*/
-/*set border of element*/
-/*set element hover*/
-/*set height*/
-/*grid block*/
 /*general*/
 /*fonts*/
 @font-face {
@@ -18,67 +10,40 @@
 html, body {
   font-family: "christos", Serif;
   font-size: 16px;
-  margin: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
   text-align: center;
   background: #f5f5f5;
-  color: #242428;
-  -ms-touch-action: manipulation;
-  touch-action: manipulation;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover; }
+  color: #242428; }
 
-::-webkit-scrollbar {
-  width: 10px; }
-
-/* Track */
-::-webkit-scrollbar-track {
-  -webkit-border-radius: 10px;
-  background-color: #666;
-  border-radius: 10px; }
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
-  background: #f0f0f0; }
-
-/*elements*/
-input, select {
+input {
   width: auto;
   height: 32px;
   line-height: 32px;
-  margin: 5px 0;
+  width: 220px;
   padding: 0 5px;
-  border-radius: 4px;
   border: 1px solid #ddd;
+  border-radius: 4px;
   box-sizing: border-box;
-  background: #f2f2f5;
-  color: #444;
-  text-align: center; }
+  text-align: center;
+  font-family: 'christos';
+  font-size: 18px; }
 
 textarea {
   height: 7em;
+  padding: 5px;
+  margin: 5px 0;
   display: inline-block;
   vertical-align: middle;
-  font-family: 'christos', Serif;
   resize: none;
-  border-radius: 4px;
+  width: 400px;
   border: 1px solid #ddd;
+  border-radius: 4px;
   box-sizing: border-box;
-  background: #f2f2f5;
-  color: #444; }
-
-select {
-  margin: 0 2px; }
+  font-family: 'christos';
+  font-size: 18px; }
 
 button {
-  font: "christos", Serif;
-  background: #27ae60;
   color: #fff;
+  background: #27ae60;
   padding: 5px 10px;
   cursor: pointer;
   height: 30px;

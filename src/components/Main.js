@@ -1,8 +1,14 @@
 import React, { PropTypes } from 'react'
 
-const Main = ( { data } ) => (
+const Main = ( {categories} ) => (
 	<div className="main">
-		main
+        {(categories.length > 0) ?
+            categories.map( (v,i) =>
+                <div key={i}>
+                    <div>{v.id}</div>
+                </div>
+            )
+        :"Add"}
 	</div>
 )
 

@@ -1,5 +1,5 @@
 let main = {
-	path : "main"
+	categories : [],
 }
 
 export default { main }
