@@ -24,9 +24,11 @@ const Main = ( { categories, openTag } ) => (
                     <div className="mainRow">
                         <div className="key">Products</div>
                         <div className="val">
-                            {v.offers.map( (vOffer, iOffer) =>
-                                <div key={iOffer} className="tag" onClick={()=>openTag(i, iOffer)}>{vOffer.properties.name}</div>
-                            )}
+                            {(v.offers.length > 0) ?
+                                v.offers.map( (vOffer, iOffer) =>
+                                    <div key={iOffer} className="tag" onClick={()=>openTag(i, iOffer)}>{vOffer.id}</div>
+                                )
+                            :"No offers"}
                         </div>
                     </div>
                 </div>

@@ -19,8 +19,8 @@ function mapDispatchToProps(dispatch) {
 		loadCategories: () => {
 			dispatch(load_categories());
 		},
-        loadProduct: (productIdx) => {
-            dispatch(load_product(productIdx));
+        loadProduct: (productIdx, catId) => {
+            dispatch(load_product(productIdx, catId));
         }
 	};
 }
@@ -44,7 +44,8 @@ class Main extends Component {
 
     //open product
     openTagHandler(catIdx, idx){
-        this.props.loadProduct(this.props.categories[catIdx].offers[idx].id)
+        this.props.loadProduct(this.props.categories[catIdx].offers[idx].id, this.props.categories[catIdx].id);
+        history.push("/product");
     }
 
 	render() {

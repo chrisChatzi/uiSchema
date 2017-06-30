@@ -36139,7 +36139,7 @@ module.exports = warning;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.load_product_reducer = exports.load_product = exports.load_categories_reducer = exports.load_categories = undefined;
+exports.update_product_reducer = exports.update_product = exports.delete_product_reducer = exports.delete_product = exports.load_product_reducer = exports.load_product = exports.load_categories_reducer = exports.load_categories = undefined;
 
 var _ajaxQuery = require("ajax-query");
 
@@ -36168,7 +36168,7 @@ var load_categories_reducer = exports.load_categories_reducer = function load_ca
 };
 
 //load product
-var load_product = exports.load_product = function load_product(id) {
+var load_product = exports.load_product = function load_product(id, catId) {
     return function (dispatch) {
         var options = {
             url: "/product",
@@ -36177,13 +36177,53 @@ var load_product = exports.load_product = function load_product(id) {
             data: { id: id }
         };
         _ajaxQuery2.default.ajaxRequest(options, function (res) {
-            if (res.type == "ok") dispatch(load_product_reducer(res.data));
+            if (res.type == "ok") dispatch(load_product_reducer(res.data, catId));
         });
     };
 };
-var load_product_reducer = exports.load_product_reducer = function load_product_reducer(data) {
+var load_product_reducer = exports.load_product_reducer = function load_product_reducer(data, catId) {
     return {
         type: "LOAD_PRODUCT",
+        data: data, catId: catId
+    };
+};
+// delete product
+var delete_product = exports.delete_product = function delete_product(id, catId) {
+    return function (dispatch) {
+        var options = {
+            url: "/productDel",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            data: { id: id, catId: catId }
+        };
+        _ajaxQuery2.default.ajaxRequest(options, function (res) {
+            if (res.type == "ok" && res.data) dispatch(delete_product_reducer());
+        });
+    };
+};
+var delete_product_reducer = exports.delete_product_reducer = function delete_product_reducer() {
+    return {
+        type: "DELETE_PRODUCT"
+    };
+};
+// update product
+var update_product = exports.update_product = function update_product(obj, catId, prodId) {
+    return function (dispatch) {
+        var options = {
+            url: "/productUpdate",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            data: { data: obj, prodId: prodId, catId: catId }
+        };
+        _ajaxQuery2.default.ajaxRequest(options, function (res) {
+            console.log(res.data);
+            if (res.type == "ok") dispatch(update_product_reducer(res.data));
+        });
+    };
+};
+var update_product_reducer = exports.update_product_reducer = function update_product_reducer(data) {
+    return {
+        type: "UPDATE_PRODUCT",
         data: data
     };
 };
@@ -36274,15 +36314,15 @@ var Main = function Main(_ref) {
                     _react2.default.createElement(
                         "div",
                         { className: "val" },
-                        v.offers.map(function (vOffer, iOffer) {
+                        v.offers.length > 0 ? v.offers.map(function (vOffer, iOffer) {
                             return _react2.default.createElement(
                                 "div",
                                 { key: iOffer, className: "tag", onClick: function onClick() {
                                         return openTag(i, iOffer);
                                     } },
-                                vOffer.properties.name
+                                vOffer.id
                             );
-                        })
+                        }) : "No offers"
                     )
                 )
             );
@@ -36296,7 +36336,7 @@ exports.default = Main;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+    value: true
 });
 
 var _react = require("react");
@@ -36305,13 +36345,483 @@ var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Product = function Product() {
-	return _react2.default.createElement("div", { className: "product" });
+var Popup = function Popup(_ref) {
+    var data = _ref.data,
+        changeInput = _ref.changeInput,
+        updateProduct = _ref.updateProduct;
+    return _react2.default.createElement(
+        "div",
+        { className: "popupMain" },
+        data[0] ? _react2.default.createElement(
+            "div",
+            null,
+            _react2.default.createElement(
+                "div",
+                { className: "productRow" },
+                _react2.default.createElement(
+                    "div",
+                    { className: "key" },
+                    "Content type"
+                ),
+                _react2.default.createElement(
+                    "div",
+                    { className: "val" },
+                    _react2.default.createElement("input", { value: data[0].contentType, onChange: function onChange(e) {
+                            return changeInput(e, "contentType");
+                        } })
+                )
+            ),
+            _react2.default.createElement(
+                "div",
+                { className: "productRow" },
+                _react2.default.createElement(
+                    "div",
+                    { className: "key" },
+                    "Properties"
+                ),
+                _react2.default.createElement(
+                    "div",
+                    { className: "val" },
+                    _react2.default.createElement("input", { value: data[0].properties, onChange: function onChange(e) {
+                            return changeInput(e, "properties");
+                        } })
+                )
+            ),
+            data[0].offer.map(function (vOffer, iOffer) {
+                return _react2.default.createElement(
+                    "div",
+                    { key: iOffer, className: "offer" },
+                    _react2.default.createElement(
+                        "div",
+                        { className: "productRow head" },
+                        "Offer"
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "productRow" },
+                        _react2.default.createElement(
+                            "div",
+                            { className: "key" },
+                            "Name"
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "val" },
+                            _react2.default.createElement("input", { value: vOffer.properties.name, onChange: function onChange(e) {
+                                    return changeInput(e, "offer.name");
+                                } })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "productRow" },
+                        _react2.default.createElement(
+                            "div",
+                            { className: "key" },
+                            "Category"
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "val" },
+                            _react2.default.createElement("input", { value: vOffer.properties.category, onChange: function onChange(e) {
+                                    return changeInput(e, "offer.category");
+                                } })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "productRow" },
+                        _react2.default.createElement(
+                            "div",
+                            { className: "key" },
+                            "Description"
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "val" },
+                            _react2.default.createElement("input", { value: vOffer.properties.description, onChange: function onChange(e) {
+                                    return changeInput(e, "offer.description");
+                                } })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "productRow" },
+                        _react2.default.createElement(
+                            "div",
+                            { className: "key" },
+                            "Product name"
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "val" },
+                            _react2.default.createElement("input", { value: vOffer.properties.productName, onChange: function onChange(e) {
+                                    return changeInput(e, "offer.productName");
+                                } })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "productRow" },
+                        _react2.default.createElement(
+                            "div",
+                            { className: "key" },
+                            "Retailer URL"
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "val" },
+                            _react2.default.createElement("input", { value: vOffer.properties.retailerUrl, onChange: function onChange(e) {
+                                    return changeInput(e, "offer.retailerUrl");
+                                } })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "productRow" },
+                        _react2.default.createElement(
+                            "div",
+                            { className: "key" },
+                            "Product Brand"
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "val" },
+                            _react2.default.createElement("input", { value: vOffer.properties.productBrand, onChange: function onChange(e) {
+                                    return changeInput(e, "offer.productBrand");
+                                } })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "productRow" },
+                        _react2.default.createElement(
+                            "div",
+                            { className: "key" },
+                            "Original price"
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "val" },
+                            _react2.default.createElement("input", { value: vOffer.properties.originalPrice.amount,
+                                onChange: function onChange(e) {
+                                    return changeInput(e, "offer.originalPrice.amount");
+                                } }),
+                            _react2.default.createElement("input", { value: vOffer.properties.originalPrice.currencyCode,
+                                onChange: function onChange(e) {
+                                    return changeInput(e, "offer.originalPrice.currencyCode");
+                                } })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "productRow" },
+                        _react2.default.createElement(
+                            "div",
+                            { className: "key" },
+                            "Reduced price"
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "val" },
+                            _react2.default.createElement("input", { value: vOffer.properties.reducedPrice.amount,
+                                onChange: function onChange(e) {
+                                    return changeInput(e, "offer.reducedPrice.amount");
+                                } }),
+                            _react2.default.createElement("input", { value: vOffer.properties.reducedPrice.currencyCode,
+                                onChange: function onChange(e) {
+                                    return changeInput(e, "offer.reducedPrice.currencyCod");
+                                } })
+                        )
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "productRow" },
+                        _react2.default.createElement(
+                            "div",
+                            { className: "key" },
+                            "Image"
+                        ),
+                        _react2.default.createElement(
+                            "div",
+                            { className: "val" },
+                            _react2.default.createElement("input", { value: vOffer.properties.productImagePointer.itemName,
+                                onChange: function onChange(e) {
+                                    return changeInput(e, "offer.productImagePointer.itemName");
+                                } })
+                        )
+                    )
+                );
+            }),
+            _react2.default.createElement(
+                "div",
+                { className: "productRow" },
+                _react2.default.createElement(
+                    "button",
+                    { onClick: updateProduct },
+                    "Update"
+                )
+            )
+        ) : ""
+    );
+};
+
+exports.default = Popup;
+
+},{"react":232}],260:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Popup = require('./Popup.js');
+
+var _Popup2 = _interopRequireDefault(_Popup);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Product = function Product(_ref) {
+    var state = _ref.state,
+        product = _ref.product,
+        delProduct = _ref.delProduct,
+        openPopup = _ref.openPopup,
+        closePopup = _ref.closePopup,
+        changeInput = _ref.changeInput,
+        updateProduct = _ref.updateProduct;
+    return _react2.default.createElement(
+        'div',
+        { className: 'product' },
+        _react2.default.createElement('div', { className: state.popup ? "popupBack" : "popupBack off", onClick: closePopup }),
+        _react2.default.createElement(
+            'div',
+            { className: state.popup ? "popup" : "popup off", id: 'popup' },
+            _react2.default.createElement(_Popup2.default, { data: product, changeInput: changeInput, updateProduct: updateProduct })
+        ),
+        product.length > 0 ? product.map(function (v, i) {
+            return _react2.default.createElement(
+                'div',
+                { key: i, className: 'productItem' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'productRow head' },
+                    v.id,
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'header edit', onClick: openPopup },
+                        _react2.default.createElement('i', { className: 'fa fa-pencil' })
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'header del', onClick: delProduct },
+                        _react2.default.createElement('i', { className: 'fa fa-trash' })
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'productRow' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'key' },
+                        'Content type'
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'val' },
+                        v.contentType
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'productRow' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'key' },
+                        'Properties'
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'val' },
+                        v.properties
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'productRow' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'key' },
+                        'Created at'
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'val' },
+                        v.createdAt
+                    )
+                ),
+                v.offer.map(function (vOffer, iOffer) {
+                    return _react2.default.createElement(
+                        'div',
+                        { key: iOffer, className: 'offer' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'productRow head' },
+                            'Offer'
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'productRow' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'key' },
+                                'Created at'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'val' },
+                                vOffer.createdAt
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'productRow' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'key' },
+                                'Name'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'val' },
+                                vOffer.properties.name
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'productRow' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'key' },
+                                'Category'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'val' },
+                                vOffer.properties.category
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'productRow' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'key' },
+                                'Description'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'val' },
+                                vOffer.properties.description
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'productRow' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'key' },
+                                'Product name'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'val' },
+                                vOffer.properties.productName
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'productRow' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'key' },
+                                'Retailer URL'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'val' },
+                                vOffer.properties.retailerUrl
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'productRow' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'key' },
+                                'Product Brand'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'val' },
+                                vOffer.properties.productBrand
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'productRow' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'key' },
+                                'Original price'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'val' },
+                                vOffer.properties.originalPrice.amount + " " + vOffer.properties.originalPrice.currencyCode
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'productRow' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'key' },
+                                'Reduced price'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'val' },
+                                vOffer.properties.reducedPrice.amount + " " + vOffer.properties.reducedPrice.currencyCode
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'productRow' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'key' },
+                                'Image'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'val' },
+                                vOffer.properties.productImagePointer.itemName
+                            )
+                        )
+                    );
+                })
+            );
+        }) : ""
+    );
 };
 
 exports.default = Product;
 
-},{"react":232}],260:[function(require,module,exports){
+},{"./Popup.js":259,"react":232}],261:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36357,8 +36867,8 @@ function mapDispatchToProps(dispatch) {
 		loadCategories: function loadCategories() {
 			dispatch((0, _actions.load_categories)());
 		},
-		loadProduct: function loadProduct(productIdx) {
-			dispatch((0, _actions.load_product)(productIdx));
+		loadProduct: function loadProduct(productIdx, catId) {
+			dispatch((0, _actions.load_product)(productIdx, catId));
 		}
 	};
 }
@@ -36393,7 +36903,8 @@ var Main = function (_Component) {
 	}, {
 		key: 'openTagHandler',
 		value: function openTagHandler(catIdx, idx) {
-			this.props.loadProduct(this.props.categories[catIdx].offers[idx].id);
+			this.props.loadProduct(this.props.categories[catIdx].offers[idx].id, this.props.categories[catIdx].id);
+			_history2.default.push("/product");
 		}
 	}, {
 		key: 'render',
@@ -36411,11 +36922,11 @@ var Main = function (_Component) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Main);
 
-},{"../actions.js":257,"../components/Main.js":258,"../history.js":262,"react":232,"react-redux":180}],261:[function(require,module,exports){
+},{"../actions.js":257,"../components/Main.js":258,"../history.js":263,"react":232,"react-redux":180}],262:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -36423,6 +36934,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _reactRedux = require('react-redux');
 
@@ -36447,53 +36962,138 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
 function mapStateToProps(state) {
-	return {};
+    return {
+        product: state.main.product,
+        catId: state.main.selectedCategory
+    };
 }
 
 function mapDispatchToProps(dispatch) {
-	return {
-		loadCategories: function loadCategories() {
-			dispatch((0, _actions.load_categories)());
-		}
-	};
+    return {
+        deleteProduct: function deleteProduct(id, catId) {
+            dispatch((0, _actions.delete_product)(id, catId));
+        },
+        updateProduct: function updateProduct(obj, catId, prodId) {
+            dispatch((0, _actions.update_product)(obj, catId, prodId));
+        }
+    };
 }
 
 var Product = function (_Component) {
-	_inherits(Product, _Component);
+    _inherits(Product, _Component);
 
-	_createClass(Product, null, [{
-		key: 'propTypes',
-		get: function get() {
-			return {};
-		}
-	}]);
+    _createClass(Product, null, [{
+        key: 'propTypes',
+        get: function get() {
+            return {
+                product: _propTypes2.default.array.isRequired
+            };
+        }
+    }]);
 
-	function Product(props) {
-		_classCallCheck(this, Product);
+    function Product(props) {
+        _classCallCheck(this, Product);
 
-		return _possibleConstructorReturn(this, (Product.__proto__ || Object.getPrototypeOf(Product)).call(this, props));
-	}
+        var _this = _possibleConstructorReturn(this, (Product.__proto__ || Object.getPrototypeOf(Product)).call(this, props));
 
-	_createClass(Product, [{
-		key: 'componentDidMount',
-		value: function componentDidMount() {}
-	}, {
-		key: 'render',
-		value: function render() {
-			return _react2.default.createElement(
-				'div',
-				null,
-				_react2.default.createElement(_Product2.default, null)
-			);
-		}
-	}]);
+        _this.state = {
+            popup: false,
+            productEdit: ""
+        };
 
-	return Product;
+        _this.delProduct = _this.delProductHandler.bind(_this);
+        _this.openPopup = _this.openPopupHandler.bind(_this);
+        _this.closePopup = _this.closePopupHandler.bind(_this);
+        _this.changeInput = _this.changeInputHandler.bind(_this);
+        _this.updateProduct = _this.updateProductHandler.bind(_this);
+        return _this;
+    }
+
+    _createClass(Product, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {}
+
+        // delete product
+
+    }, {
+        key: 'delProductHandler',
+        value: function delProductHandler() {
+            var r = confirm("Are you sure you want to delete this product?\nId: " + this.props.product[0].id);
+            if (r) {
+                this.props.deleteProduct(this.props.product[0].id, this.props.catId);
+                _history2.default.push("/");
+            }
+        }
+
+        // open popup
+
+    }, {
+        key: 'openPopupHandler',
+        value: function openPopupHandler() {
+            this.setState({ popup: true });
+            var el = document.getElementById("popup");
+            Object.assign(el.style, {
+                height: window.innerHeight * 0.8 + "px",
+                width: window.innerWidth * 0.8 + "px",
+                top: "50%",
+                left: "50%",
+                marginTop: -(window.innerHeight * 0.8) / 2 + "px",
+                marginLeft: -(window.innerWidth * 0.8) / 2 + "px"
+            });
+        }
+        //close popup
+
+    }, {
+        key: 'closePopupHandler',
+        value: function closePopupHandler() {
+            this.setState({ popup: false });
+        }
+        // edit product input change handler
+
+    }, {
+        key: 'changeInputHandler',
+        value: function changeInputHandler(e, type) {
+            var edit = this.props.product.slice();
+            if (type.indexOf(".") >= 0) {
+                var arr = type.split(".");
+                if (arr[2]) edit[0].offer[0].properties[arr[1]][arr[2]] = e.target.value;else edit[0].offer[0].properties[arr[1]] = e.target.value;
+            } else edit[0][type] = e.target.value;
+
+            this.setState({ productEdit: edit[0] });
+        }
+        // update product
+
+    }, {
+        key: 'updateProductHandler',
+        value: function updateProductHandler() {
+            var res = this.state.productEdit;
+            if (res) {
+                if (parseInt(res.offer[0].properties.originalPrice.amount, 10) < parseInt(res.offer[0].properties.reducedPrice.amount, 10)) alert("Reduced price cannot be higher than the original one");else {
+                    this.props.updateProduct(res, this.props.catId, this.props.product[0].id);
+                    this.closePopupHandler();
+                }
+            } else alert("Nothing to update");
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(_Product2.default, { state: this.state,
+                    product: this.props.product, delProduct: this.delProduct,
+                    openPopup: this.openPopup, closePopup: this.closePopup,
+                    changeInput: this.changeInput, updateProduct: this.updateProduct })
+            );
+        }
+    }]);
+
+    return Product;
 }(_react.Component);
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Product);
 
-},{"../actions.js":257,"../components/Product.js":259,"../history.js":262,"react":232,"react-redux":180}],262:[function(require,module,exports){
+},{"../actions.js":257,"../components/Product.js":260,"../history.js":263,"prop-types":42,"react":232,"react-redux":180}],263:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36508,7 +37108,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = (0, _createBrowserHistory2.default)();
 
-},{"history/createBrowserHistory":29}],263:[function(require,module,exports){
+},{"history/createBrowserHistory":29}],264:[function(require,module,exports){
 'use strict';
 
 var _react = require('react');
@@ -36565,19 +37165,21 @@ function desktop() {
 	), document.getElementById('app'));
 }
 
-},{"./history.js":262,"./reducers":265,"./routes/Main":267,"./routes/Product":268,"react":232,"react-dom":44,"react-redux":180,"react-router":203,"redux":239,"redux-thunk":233}],264:[function(require,module,exports){
+},{"./history.js":263,"./reducers":266,"./routes/Main":268,"./routes/Product":269,"react":232,"react-dom":44,"react-redux":180,"react-router":203,"redux":239,"redux-thunk":233}],265:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 var main = {
-	categories: []
+	categories: [],
+	selectedCategory: "",
+	product: []
 };
 
 exports.default = { main: main };
 
-},{}],265:[function(require,module,exports){
+},{}],266:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36598,7 +37200,7 @@ var reducer = (0, _redux.combineReducers)({
 
 exports.default = reducer;
 
-},{"./main":266,"redux":239}],266:[function(require,module,exports){
+},{"./main":267,"redux":239}],267:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -36624,7 +37226,21 @@ var state_update = function state_update() {
 			}
 		case "LOAD_PRODUCT":
 			{
-				console.log(action.data);
+				newstate.product = action.data;
+				newstate.selectedCategory = action.catId;
+				return newstate;
+			}
+		case "DELETE_PRODUCT":
+			{
+				newstate.product = [];
+				return newstate;
+			}
+		case "UPDATE_PRODUCT":
+			{
+				// let arr = newstate.product.slice();
+				var arr = [action.data];
+				console.log(arr);
+				newstate.product = arr;
 				return newstate;
 			}
 		default:
@@ -36634,7 +37250,7 @@ var state_update = function state_update() {
 
 exports.default = state_update;
 
-},{"../initialState":264}],267:[function(require,module,exports){
+},{"../initialState":265}],268:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36661,7 +37277,7 @@ var Main = function Main() {
 
 exports.default = Main;
 
-},{"../containers/Main":260,"react":232}],268:[function(require,module,exports){
+},{"../containers/Main":261,"react":232}],269:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -36688,4 +37304,4 @@ var Product = function Product() {
 
 exports.default = Product;
 
-},{"../containers/Product":261,"react":232}]},{},[263]);
+},{"../containers/Product":262,"react":232}]},{},[264]);

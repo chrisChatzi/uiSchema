@@ -30,30 +30,13 @@ var express = require('express'),
                     id: String,
                     properties: String,
                     createdAt: Date,
-                    offers: [{
-                        id:String,
-                        properties:{
-                           name:String,
-                           reducedPrice:{
-                              amount:Number,
-                              currencyCode:String
-                           },
-                           originalPrice:{
-                              amount:Number,
-                              currencyCode:String
-                           },
-                           productImagePointer:{
-                              itemName:String
-                           }
-                        },
-                        createdAt:Date
-                    }]
+                    offers: [{ id:String }]
                 });
                 var productSchema = new Schema({
                        "contentType":String,
                        "id":String,
                        "properties":String,
-                       "createdAt":String,
+                       "createdAt":Date,
                        "offer":[
                           {
                              "properties":{
@@ -81,41 +64,52 @@ var express = require('express'),
                 });
                 categoryModel = mongoose.model('categoryModel', categorySchema);
                 productModel = mongoose.model('productModel', productSchema);
-
-                let y = new productModel({
-                    "contentType":"String",
-                    "id":"1",
-                    "properties":"String",
-                    "createdAt":"String",
-                    "offer":[
-                       {
-                          "properties":{
-                             "name":"String",
-                             "category":"String",
-                             "description":"String",
-                             "productName":"String",
-                             "retailerUrl":"String",
-                             "productBrand":"String",
-                             "reducedPrice":{
-                                "amount":5,
-                                "currencyCode":"String"
-                             },
-                             "originalPrice":{
-                                "amount":4,
-                                "currencyCode":"String"
-                             },
-                             "productImagePointer":{
-                                "itemName":"String"
-                             }
-                          },
-                          "createdAt":new Date()
-                       }
-                    ]
-                });
-                y.save(function(err) {
-                  if (err) throw err;
-                  console.log('prod saved successfully!');
-                });
+                //////
+                    let y = new categoryModel({
+                        contentType: "String",
+                        id: "String",
+                        properties: "String",
+                        createdAt: new Date(),
+                        offers: [{ id:"String" }]
+                    });
+                    // y.save(function(err) {
+                    //   if (err) throw err;
+                    //   console.log('User saved successfully!');
+                    // });
+                    let x = new productModel({
+                        "contentType":"String",
+                        "id":"String",
+                        "properties":"String",
+                        "createdAt":new Date(),
+                        "offer":[
+                           {
+                              "properties":{
+                                 "name":"String",
+                                 "category":"String",
+                                 "description":"String",
+                                 "productName":"String",
+                                 "retailerUrl":"String",
+                                 "productBrand":"String",
+                                 "reducedPrice":{
+                                    "amount":55,
+                                    "currencyCode":"String"
+                                 },
+                                 "originalPrice":{
+                                    "amount":77,
+                                    "currencyCode":"String"
+                                 },
+                                 "productImagePointer":{
+                                    "itemName":"String"
+                                 }
+                              },
+                              "createdAt":new Date()
+                           }
+                        ]
+                    });
+                    // x.save(function(err) {
+                    //   if (err) throw err;
+                    //   console.log('User saved successfully!');
+                    // });
                 httpServerFunction();
             });
             mongoose.connect(mongoPath);
@@ -139,6 +133,26 @@ var express = require('express'),
             productModel.find({ id : req.body.id }, function(err, result) {
                 if (err) throw err;
                 res.send(JSON.stringify({ data : result}))
+            });
+        });
+        // delete product
+        app.post('/productDel', function (req, res){
+            productModel.find({ id : req.body.id }, function(err, result) {
+                if (err) throw err;
+                productModel.remove(function(err) {
+                    if (err) throw err;
+                    categoryModel.findOneAndUpdate({id: req.body.catId}, {$pull: {offers: {id : req.body.id}}}, function(err, data){
+                        if(err) throw err
+                        res.send(JSON.stringify({ data : true }))
+                    });
+                });
+            });
+        });
+        // update product
+        app.post('/productUpdate', function (req, res){
+            productModel.findOneAndUpdate({id: req.body.prodId}, { $set : req.body.data }, {new: true}, function(err, data){
+                if(err) throw err
+                res.send(JSON.stringify({ data : data }))
             });
         });
         //////////////////////////

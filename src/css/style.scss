@@ -82,6 +82,7 @@ $font: 'christos', Serif;
 		line-height: 50px;
 		border-bottom: 1px solid #ddd;
 		font-weight: bold;
+		position: relative;
 	}
 	.box{
 		border: 1px solid #ddd;
@@ -90,20 +91,59 @@ $font: 'christos', Serif;
 		box-shadow: 2px 1px 1px 1px rgba(0,0,0,0.25);
 		background: #fff;
 	}
-	.row{
-		height: 50px;
-		line-height: 50px;
-		.key{
-			float: left;
-			width: 30%;
+	// popup
+		.popupBack{
+			z-index: 9;
+			position: fixed;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background: rgba(0,0,0,0.5);
 		}
-		.val{
-			float: left;
-			width: 70%
+		.popup{
+			z-index: 10;
+			position: fixed;
+			background: #fff;
+			border-radius: 5px;
+			overflow-y: scroll;
 		}
+		.off{
+			display: none;
+		}
+	// row
+		.row{
+			height: 50px;
+			line-height: 50px;
+			.key{
+				float: left;
+				width: 30%;
+			}
+			.val{
+				float: left;
+				width: 70%
+			}
 
-	}
-	.row:nth-child(even){ background: #f5f5f5; }
+		}
+		.row:nth-child(even){ background: #f5f5f5; }
+	// absolute
+		.header{
+			position: absolute;
+			right: 0;
+			top: 0;
+			height: 50px;
+			line-height: 50px;
+			width: 50px;
+			cursor: pointer;
+		}
+		.edit{
+			right: 10px;
+			&:hover{ color: blue; }
+		}
+		.del{
+			right: 70px;
+			&:hover{ color: red; }
+		}
 // main
 .main{
 	float: left;
@@ -127,5 +167,15 @@ $font: 'christos', Serif;
 		&:hover{
 			background: #fff;
 		}
+	}
+}
+// product
+.product{
+	width: 60%;
+	margin: 5px 20%;
+	overflow: auto;
+	@extend .box;
+	.productRow{
+		@extend .row;
 	}
 }

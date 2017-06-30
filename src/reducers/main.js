@@ -8,7 +8,19 @@ const state_update = (state = init.main, action) => {
 			return newstate;
 		}
 		case "LOAD_PRODUCT": {
-		console.log(action.data);
+			newstate.product = action.data;
+			newstate.selectedCategory = action.catId;
+			return newstate;
+		}
+		case "DELETE_PRODUCT": {
+			newstate.product = [];
+			return newstate;
+		}
+		case "UPDATE_PRODUCT": {
+			// let arr = newstate.product.slice();
+			let arr = [action.data];
+			console.log(arr)
+			newstate.product = arr;
 			return newstate;
 		}
 		default:
