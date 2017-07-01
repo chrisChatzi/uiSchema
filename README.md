@@ -6,6 +6,8 @@ Technologies used: React/Redux, Grunt, Sass, Nodejs, Express, mongoDB
 
 You need a mongoDB running and a DB named: 'uiSchema'
 
+and then start server:
+
 ```javascript
 	npm install express
 ```
