@@ -36394,6 +36394,11 @@ var Popup = function Popup(_ref) {
         data[0] ? _react2.default.createElement(
             "div",
             null,
+            _react2.default.createElement(
+                "div",
+                { className: "popupRow head" },
+                newFlag ? "Add product" : "Edit product"
+            ),
             newFlag ? _react2.default.createElement(
                 "div",
                 { className: "popupRow" },

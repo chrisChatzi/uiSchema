@@ -9,12 +9,7 @@ var express = require('express'),
     fs = require('fs'),
     httpPort = 8081;
 
-
     var categoryModel = "", productModel = "";
-    // x.save(function(err) {
-    //   if (err) throw err;
-    //   console.log('User saved successfully!');
-    // });
 
     // mongoDB init
         var mongoDBFunction = (function(){
@@ -33,83 +28,52 @@ var express = require('express'),
                     offers: [{ id:String }]
                 });
                 var productSchema = new Schema({
-                       "contentType":String,
-                       "id":String,
-                       "properties":String,
-                       "createdAt":Date,
-                       "offer":[
-                          {
-                             "properties":{
-                                "name":String,
-                                "category":String,
-                                "description":String,
-                                "productName":String,
-                                "retailerUrl":String,
-                                "productBrand":String,
-                                "reducedPrice":{
-                                   "amount":Number,
-                                   "currencyCode":String
-                                },
-                                "originalPrice":{
-                                   "amount":Number,
-                                   "currencyCode":String
-                                },
-                                "productImagePointer":{
-                                   "itemName":String
-                                }
-                             },
-                             "createdAt":Date
-                          }
-                       ]
+                   "contentType":String,
+                   "id":String,
+                   "properties":String,
+                   "createdAt":Date,
+                   "offer":[
+                      {
+                         "properties":{
+                            "name":String,
+                            "category":String,
+                            "description":String,
+                            "productName":String,
+                            "retailerUrl":String,
+                            "productBrand":String,
+                            "reducedPrice":{
+                               "amount":Number,
+                               "currencyCode":String
+                            },
+                            "originalPrice":{
+                               "amount":Number,
+                               "currencyCode":String
+                            },
+                            "productImagePointer":{
+                               "itemName":String
+                            }
+                         },
+                         "createdAt":Date
+                      }
+                   ]
                 });
                 categoryModel = mongoose.model('categoryModel', categorySchema);
                 productModel = mongoose.model('productModel', productSchema);
                 //////
-                    let y = new categoryModel({
-                        contentType: "String",
-                        id: "String",
-                        properties: "String",
+                    let dummyCategory = new categoryModel({
+                        contentType: "content",
+                        id: "wei4oinr-6546-4dewf-87ae-8d91abffe242",
+                        properties: "props",
                         createdAt: new Date(),
-                        offers: [{ id:"String" }]
-                    });
-                    // y.save(function(err) {
-                    //   if (err) throw err;
-                    //   console.log('User saved successfully!');
-                    // });
-                    let x = new productModel({
-                        "contentType":"String",
-                        "id":"String",
-                        "properties":"String",
-                        "createdAt":new Date(),
-                        "offer":[
-                           {
-                              "properties":{
-                                 "name":"String",
-                                 "category":"String",
-                                 "description":"String",
-                                 "productName":"String",
-                                 "retailerUrl":"String",
-                                 "productBrand":"String",
-                                 "reducedPrice":{
-                                    "amount":55,
-                                    "currencyCode":"String"
-                                 },
-                                 "originalPrice":{
-                                    "amount":77,
-                                    "currencyCode":"String"
-                                 },
-                                 "productImagePointer":{
-                                    "itemName":"String"
-                                 }
-                              },
-                              "createdAt":new Date()
-                           }
+                        offers: [
+                            // { id:"c482b0fb-ca01-4200-ba10-61a16f8597ae" },
+                            // { id:"c482b234-3a01-4500-ba10-61a16f8597ae" }
                         ]
                     });
-                    // x.save(function(err) {
-                    //   if (err) throw err;
-                    //   console.log('User saved successfully!');
-                    // });
+                    dummyCategory.save(function(err) {
+                      if (err) throw err;
+                      console.log('User saved successfully!');
+                    });
                 httpServerFunction();
             });
             mongoose.connect(mongoPath);
@@ -118,7 +82,7 @@ var express = require('express'),
 //send file request
    function httpServerFunction(){
         app.use('/', express.static((path.join(__dirname,'../dist'))));
-
+        //get all categories
         app.get('/categories', function (req, res){
             categoryModel.find({}, function(err, result) {
                 if (err) throw err;
@@ -128,7 +92,7 @@ var express = require('express'),
 
         app.use(bodyParser.json({limit: "50mb"}));
         app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}))
-
+        // get product by id
         app.post('/product', function (req, res){
             productModel.find({ id : req.body.id }, function(err, result) {
                 if (err) throw err;
@@ -139,13 +103,10 @@ var express = require('express'),
         app.post('/productDel', function (req, res){
             productModel.findOneAndRemove({ id : req.body.id }, function(err, product) {
                 if (err) throw err;
-                // product.remove(function(err) {
-                //     if (err) throw err;
-                    categoryModel.findOneAndUpdate({id: req.body.catId}, {$pull: {offers: {id : req.body.id}}}, function(err, data){
-                        if(err) throw err
-                        res.send(JSON.stringify({ data : true }))
-                    });
-                // });
+                categoryModel.findOneAndUpdate({id: req.body.catId}, {$pull: {offers: {id : req.body.id}}}, function(err, data){
+                    if(err) throw err
+                    res.send(JSON.stringify({ data : true }))
+                });
             });
         });
         // update product

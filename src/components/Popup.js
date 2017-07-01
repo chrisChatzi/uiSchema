@@ -4,6 +4,9 @@ const Popup = ( { newFlag, data, changeInput, action } ) => (
 	<div className="popupMain">
         {(data[0]) ?
             <div>
+                <div className="popupRow head">
+                    {(newFlag) ? "Add product" : "Edit product"}
+                </div>
                 {(newFlag) ?
                     <div className="popupRow">
                         <div className="key">Id</div>
